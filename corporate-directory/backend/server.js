@@ -1,5 +1,6 @@
 import express from 'express';
 import db from './database.js';
+import dbAPIRequests from './dbAPIRequests.js';
 
 
 const app = express();
@@ -14,11 +15,7 @@ app.get('/api/employees/by-company/:companyId', (req, res) => {
   const { companyId } = req.params;
   
   db.all(
-    `SELECT e.*, c.name as company_name 
-     FROM employees e 
-     LEFT JOIN companies c ON e.company_id = c.id 
-     WHERE e.company_id = ?
-     ORDER BY e.full_name`,
+    dbAPIRequests.employeesByCompanyId,
     [companyId],
     (err, rows) => {
       if (err) {
@@ -34,11 +31,7 @@ app.get('/api/employees/by-site/:siteId', (req, res) => {
   const { siteId } = req.params;
   
   db.all(
-    `SELECT e.*, s.name as site_name 
-     FROM employees e 
-     LEFT JOIN sites s ON e.site_id = s.id 
-     WHERE e.site_id = ?
-     ORDER BY e.full_name`,
+    dbAPIRequests.employeesBySiteId,
     [siteId],
     (err, rows) => {
       if (err) {
@@ -51,7 +44,7 @@ app.get('/api/employees/by-site/:siteId', (req, res) => {
 
 // Вывести все компании
 app.get('/api/companies', (req, res) => {
-  db.all('SELECT * FROM companies ORDER BY name', (err, rows) => {
+  db.all(dbAPIRequests.allCompanies, (err, rows) => {
     if (err) {
       return res.status(500).json({ error: 'Database error' });
     }
@@ -61,7 +54,7 @@ app.get('/api/companies', (req, res) => {
 
 // Вывести компанию по id
 app.get('/api/companies/:id', (req, res) => {
-  db.get('SELECT * FROM companies WHERE id = ?', [req.params.id], (err, row) => {
+  db.get(dbAPIRequests.companyById, [req.params.id], (err, row) => {
     if (err) {
       return res.status(500).json({ error: 'Database error' });
     }
@@ -74,7 +67,7 @@ app.get('/api/companies/:id', (req, res) => {
 
 // Вывести все площадки
 app.get('/api/sites', (req, res) => {
-  db.all('SELECT * FROM sites ORDER BY name', (err, rows) => {
+  db.all(dbAPIRequests.allSites, (err, rows) => {
     if (err) {
       return res.status(500).json({ error: 'Database error' });
     }
@@ -84,7 +77,7 @@ app.get('/api/sites', (req, res) => {
 
 // Вывести площадку по id
 app.get('/api/sites/:id', (req, res) => {
-  db.get('SELECT * FROM sites WHERE id = ?', [req.params.id], (err, row) => {
+  db.get(dbAPIRequests.siteById, [req.params.id], (err, row) => {
     if (err) {
       return res.status(500).json({ error: 'Database error' });
     }
