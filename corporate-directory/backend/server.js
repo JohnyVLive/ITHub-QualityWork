@@ -1,13 +1,13 @@
-import express from 'express';
-import db from './database.js';
-import dbAPIRequests from './dbAPIRequests.js';
-import cors from 'cors';
+import express from 'express'; // Импортируем Express.js
+import db from './database.js'; // Импортируем модуль базы данных
+import dbAPIRequests from './dbAPIRequests.js'; // Импортируем SQL-запросы
+import cors from 'cors'; // Импортируем cors для разрешения кросс-доменных запросов
 
 
 const app = express();
 const PORT = 3000;
-app.use(express.json());
-app.use(cors());
+app.use(express.json()); 
+app.use(cors()); // Разрешаем кросс-доменные запросы
 
 
 // ==================== Публичные точки ====================
