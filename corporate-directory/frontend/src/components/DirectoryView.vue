@@ -25,7 +25,7 @@
       <!-- Комментарий -->
       <div class="comment-section" v-if="currentComment">
         <div class="comment-box">
-          <p class="comment-text">Здесь будет комментарий: {{ currentComment }}</p>
+          <p class="comment-text">Описание: {{ currentComment }}</p>
         </div>
       </div>
       
@@ -72,7 +72,10 @@
         placeholder="Поиск по любому полю..."
         class="search-input"
       />
-      <button @click="clearSearch" class="clear-btn" v-if="searchQuery">
+      <button 
+        @click="clearSearch" 
+        class="clear-btn" 
+        v-if="searchQuery">
         Очистить
       </button>
     </div>
@@ -84,50 +87,37 @@
 
     <!-- Таблица сотрудников -->
     <div v-else class="table-wrapper">
-      <table class="employees-table">
+      <table class="employees-table" >
         <thead>
           <tr>
-            <th @click="sortBy('full_name')" class="sortable">
-              ФИО сотрудника
-            </th>
-            <th @click="sortBy('internal_number')" class="sortable">
-              Внутренний номер
-            </th>
-            <th @click="sortBy('city_number')" class="sortable">
-              Городской номер
-            </th>
-            <th @click="sortBy('mobile_number')" class="sortable">
-              Мобильный номер
-            </th>
-            <th @click="sortBy('email')" class="sortable">
-              Email
-            </th>
-            <th @click="sortBy('position')" class="sortable">
-              Должность
-            </th>
-            <th @click="sortBy('department')" class="sortable">
-              Отдел
-            </th>
-            <th @click="sortBy(viewMode === 'company' ? 'company' : 'site')" class="sortable">
-              {{ viewMode === 'company' ? 'Площадка' : 'Компания' }}
+            <th
+                v-for="column in tableColumns"
+                :key="column.key"
+                class="sortable"
+                :class="getSortClass(column.key)"
+                @click="sortBy(column.key)"
+              >
+                {{ column.label }}
+
             </th>
           </tr>
         </thead>
         <tbody>
-          <tr v-if="employees.length === 0">
+          <tr v-if="filteredEmployees.length === 0">
             <td colspan="8" class="no-data">
               {{ searchQuery ? 'Ничего не найдено' : 'Нет данных' }}
             </td>
           </tr>
-          <tr v-for="employee in employees" :key="employee.id">
-            <td>{{ employee.full_name }}</td>
-            <td class="centered">{{ employee.internal_number || '-' }}</td>
-            <td>{{ employee.city_number || '-' }}</td>
-            <td>{{ employee.mobile_number || '-' }}</td>
-            <td><a v-bind:href="`mailto:${employee.email}`">{{ employee.email}} </a></td>
-            <td>{{ employee.position || '-' }}</td>
-            <td>{{ employee.department || '-' }}</td>
-            <td>{{ viewMode === 'company' ? employee.site_name : employee.company_name }}</td>
+          <tr v-for="employee in filteredEmployees" :key="employee.id">
+              <td>{{ employee.full_name }}</td>
+              <td>{{ employee.internal_number }}</td>
+              <td>{{ employee.city_number }}</td>
+              <td>{{ employee.mobile_number }}</td>
+              <td><a v-bind:href="`mailto:${employee.email}`">{{ employee.email}} </a></td>
+              <td>{{ employee.position }}</td>
+              <td>{{ employee.department }}</td>
+              <td v-if="viewMode === 'site'">{{ employee.company_name }}</td>
+              <td v-if="viewMode === 'company'">{{ employee.site_name }}</td>
           </tr>
         </tbody>
       </table>
@@ -157,7 +147,7 @@ export default {
       searchQuery: '',
       loading: false,
       currentComment: '',
-      sortField: 'full_name',
+      sortKey: 'full_name',
       sortOrder: 'asc',
       searchTimeout: null
     }
@@ -172,7 +162,54 @@ export default {
         return site ? `Площадка - ${site.name}` : 'Отображение по площадке'
       }
     },
+    tableColumns() {
+      const baseColumns = [
+        { key: 'full_name', label: 'ФИО сотрудника' },
+        { key: 'internal_number', label: 'Внутренний номер' },
+        { key: 'city_number', label: 'Городской номер' },
+        { key: 'mobile_number', label: 'Мобильный номер' },
+        { key: 'email', label: 'Email' },
+        { key: 'position', label: 'Должность' },
+        { key: 'department', label: 'Отдел' }
+      ]
+      
+      if (this.viewMode === 'company') {
+        baseColumns.push({ key: 'company_name', label: 'Компания' })
+      } else {
+        baseColumns.push({ key: 'site_name', label: 'Площадка' })
+      }
+      
+      return baseColumns
+    },
+    filteredEmployees() {
+      let filtered = this.employees
 
+      // Фильтрация по поисковому запросу
+      if (this.searchQuery) {
+        const query = this.searchQuery.toLowerCase()
+        filtered = filtered.filter(emp => {
+          return Object.values(emp).some(value => {
+            return value && value.toString().toLowerCase().includes(query)
+          })
+        })
+      }
+
+      // Сортировка
+      if (this.sortKey) {
+        filtered = filtered.sort((a, b) => {
+          let aVal = a[this.sortKey] || ''
+          let bVal = b[this.sortKey] || ''
+
+          if (typeof aVal === 'string') {
+            aVal = aVal.toLowerCase()
+            bVal = bVal.toLowerCase()
+          }
+
+          return aVal < bVal ? (this.sortOrder === 'asc' ? -1 : 1) : (aVal > bVal ? (this.sortOrder === 'asc' ? 1 : -1) : 0)
+        })
+      }
+      return filtered
+    }
   },
   methods: {
     // Переключение режима просмотра
@@ -184,7 +221,6 @@ export default {
       this.viewMode = 'site'
       this.loadEmployees()
     },
-
 
     // Инициализация данных
     async loadData() {
@@ -234,20 +270,20 @@ export default {
     },
 
     // Сортировка
-    sortBy(field) {
-      if (this.sortField === field) {
+    sortBy(key) {
+      if (this.sortKey === key) {
         this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc'
       } else {
-        this.sortField = field
+        this.sortKey = key
         this.sortOrder = 'asc'
       }
-      this.loadEmployees()
     },
 
-    // Индикатор сортировки
-    getSortIndicator(field) {
-      if (this.sortField !== field) return ''
-      return this.sortOrder === 'asc' ? '↑' : '↓'  
+    getSortClass(key) {
+      if (this.sortKey === key) {
+        return this.sortOrder === 'asc' ? 'sorted-asc' : 'sorted-desc'
+      }
+      return ''
     },
 
     // Очистка поиска
