@@ -89,35 +89,27 @@
           <tr>
             <th @click="sortBy('full_name')" class="sortable">
               ФИО сотрудника
-              <span class="sort-indicator">{{ getSortIndicator('full_name') }}</span>
             </th>
             <th @click="sortBy('internal_number')" class="sortable">
               Внутренний номер
-              <span class="sort-indicator">{{ getSortIndicator('internal_number') }}</span>
             </th>
             <th @click="sortBy('city_number')" class="sortable">
               Городской номер
-              <span class="sort-indicator">{{ getSortIndicator('city_number') }}</span>
             </th>
             <th @click="sortBy('mobile_number')" class="sortable">
               Мобильный номер
-              <span class="sort-indicator">{{ getSortIndicator('mobile_number') }}</span>
             </th>
             <th @click="sortBy('email')" class="sortable">
               Email
-              <span class="sort-indicator">{{ getSortIndicator('email') }}</span>
             </th>
             <th @click="sortBy('position')" class="sortable">
               Должность
-              <span class="sort-indicator">{{ getSortIndicator('position') }}</span>
             </th>
             <th @click="sortBy('department')" class="sortable">
               Отдел
-              <span class="sort-indicator">{{ getSortIndicator('department') }}</span>
             </th>
             <th @click="sortBy(viewMode === 'company' ? 'company' : 'site')" class="sortable">
               {{ viewMode === 'company' ? 'Площадка' : 'Компания' }}
-              <span class="sort-indicator">{{ getSortIndicator(viewMode === 'company' ? 'company' : 'site') }}</span>
             </th>
           </tr>
         </thead>
@@ -129,7 +121,7 @@
           </tr>
           <tr v-for="employee in employees" :key="employee.id">
             <td>{{ employee.full_name }}</td>
-            <td>{{ employee.internal_number || '-' }}</td>
+            <td class="centered">{{ employee.internal_number || '-' }}</td>
             <td>{{ employee.city_number || '-' }}</td>
             <td>{{ employee.mobile_number || '-' }}</td>
             <td><a v-bind:href="`mailto:${employee.email}`">{{ employee.email}} </a></td>
@@ -414,7 +406,6 @@ export default {
   border: none;
   border-radius: 8px;
   font-weight: 500;
-  transition: background 0.3s ease;
 }
 
 .clear-btn:hover {
@@ -443,7 +434,7 @@ export default {
 }
 
 .employees-table thead {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #667eea;
   color: white;
 }
 
@@ -453,41 +444,35 @@ export default {
   font-weight: 600;
   font-size: 14px;
   white-space: nowrap;
+  word-break: normal;
+  /* width: 170px; */
 }
 
 .employees-table th.sortable {
   cursor: pointer;
   user-select: none;
-  transition: background 0.2s ease;
 }
 
 .employees-table th.sortable:hover {
   background: rgba(255, 255, 255, 0.1);
 }
 
-.sort-indicator {
-  display: inline-block;
-  margin-left: 5px;
-  font-size: 12px;
-}
-
 .employees-table tbody tr {
   border-bottom: 1px solid #e0e0e0;
-  transition: background 0.2s ease;
 }
 
 .employees-table tbody tr:hover {
   background: #f5f5f5;
 }
 
-.employees-table tbody tr:last-child {
-  border-bottom: none;
-}
-
 .employees-table td {
   padding: 12px;
   font-size: 14px;
   color: #333;
+}
+
+.employees-table td.centered {
+  text-align: center;
 }
 
 .no-data {
