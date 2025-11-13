@@ -5,7 +5,7 @@ echo ""
 
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
 echo -e "${BLUE}[1/2] Запуск Backend...${NC}"
 cd backend
@@ -30,6 +30,7 @@ echo ""
 echo "Backend API:  http://localhost:3000 (PID: $BACKEND_PID)"
 echo "Frontend App: http://localhost:5173 (PID: $FRONTEND_PID)"
 echo ""
+echo "Откройте http://localhost:5173 в браузере"
 echo "Для остановки нажмите Ctrl+C"
 
 wait
