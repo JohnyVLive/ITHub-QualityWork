@@ -20,7 +20,7 @@ Web-приложение для ведения корпоративного те
 **Linux/macOS:**
 ```bash
 cd corporate-directory
-./start-all.sh
+./start.sh
 ```
 
 **Windows:**

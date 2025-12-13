@@ -174,9 +174,9 @@ export default {
       ]
       
       if (this.viewMode === 'company') {
-        baseColumns.push({ key: 'company_name', label: 'Компания' })
+        baseColumns.push({ key: 'company_name', label: 'Площадка' })
       } else {
-        baseColumns.push({ key: 'site_name', label: 'Площадка' })
+        baseColumns.push({ key: 'site_name', label: 'Компания' })
       }
       
       return baseColumns
