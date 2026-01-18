@@ -24,3 +24,34 @@ export const getSites = () =>
 
 export const getSiteById = (id) => 
   api.get(`/sites/${id}`)
+
+// Админский API
+export const getAllEmployees = () => 
+  api.get('/admin/employees')
+
+export const createEmployee = (employee) => 
+  api.post('/admin/employees', employee)
+
+export const updateEmployee = (id, employee) => 
+  api.put(`/admin/employees/${id}`, employee)
+
+export const deleteEmployee = (id) => 
+  api.delete(`/admin/employees/${id}`)
+
+export const createCompany = (company) => 
+  api.post('/admin/companies', company)
+
+export const updateCompany = (id, company) => 
+  api.put(`/admin/companies/${id}`, company)
+
+export const deleteCompany = (id) => 
+  api.delete(`/admin/companies/${id}`)
+
+export const createSite = (site) => 
+  api.post('/admin/sites', site)
+
+export const updateSite = (id, site) => 
+  api.put(`/admin/sites/${id}`, site)
+
+export const deleteSite = (id) => 
+  api.delete(`/admin/sites/${id}`)

@@ -90,6 +90,8 @@ app.get('/api/sites/:id', (req, res) => {
   });
 });
 
+// ==================== Админские точки ====================
+
 app.listen(PORT, () => {
   console.log(`Backend API running on http://localhost:${PORT}`);
 });
