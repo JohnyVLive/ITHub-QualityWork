@@ -195,7 +195,7 @@ export default {
     }
   },
   methods: {
-    async loadData() {
+    async loadData() { // Загрузка всех данных
       try {
         const [employeesRes, companiesRes, sitesRes] = await Promise.all([
           getAllEmployees(),
@@ -213,15 +213,15 @@ export default {
         }
       }
     },
-    openEmployeeModal(employee = null) {
+    openEmployeeModal(employee = null) { // Открытие модального окна сотрудника
       this.selectedEmployee = employee
       this.showEmployeeModal = true
     },
-    closeEmployeeModal() {
+    closeEmployeeModal() { // Закрытие модального окна сотрудника
       this.showEmployeeModal = false
       this.selectedEmployee = null
     },
-    async handleSaveEmployee(employee) {
+    async handleSaveEmployee(employee) { // Сохранение сотрудника
       try {
         if (employee.id) {
           await updateEmployee(employee.id, employee)
@@ -235,7 +235,7 @@ export default {
         alert('Ошибка при сохранении сотрудника')
       }
     },
-    async handleDeleteEmployee(id) {
+    async handleDeleteEmployee(id) { // Удаление сотрудника
       if (confirm('Вы уверены, что хотите удалить этого сотрудника?')) {
         try {
           await deleteEmployee(id)
@@ -246,15 +246,15 @@ export default {
         }
       }
     },
-    openCompanyModal(company = null) {
+    openCompanyModal(company = null) { // Открытие модального окна компании
       this.selectedCompany = company
       this.showCompanyModal = true
     },
-    closeCompanyModal() {
+    closeCompanyModal() { // Закрытие модального окна компании
       this.showCompanyModal = false
       this.selectedCompany = null
     },
-    async handleSaveCompany(company) {
+    async handleSaveCompany(company) { // Сохранение компании
       try {
         if (company.id) {
           await updateCompany(company.id, company)
@@ -268,7 +268,7 @@ export default {
         alert('Ошибка при сохранении компании')
       }
     },
-    async handleDeleteCompany(id) {
+    async handleDeleteCompany(id) { // Удаление компании
       if (confirm('Вы уверены, что хотите удалить эту компанию?')) {
         try {
           await deleteCompany(id)
@@ -279,20 +279,20 @@ export default {
         }
       }
     },
-    openSiteModal(site = null) {
+    openSiteModal(site = null) { // Открытие модального окна площадки
       this.selectedSite = site
       this.showSiteModal = true
     },
-    closeSiteModal() {
+    closeSiteModal() { // Закрытие модального окна площадки
       this.showSiteModal = false
       this.selectedSite = null
     },
-    async handleSaveSite(site) {
+    async handleSaveSite(site) { // Сохранение площадки
       try {
         if (site.id) {
           await updateSite(site.id, site)
         } else {
-          await createSite(site)
+          await createSite(site) 
         }
         await this.loadData()
         this.closeSiteModal()
@@ -301,7 +301,7 @@ export default {
         alert('Ошибка при сохранении площадки')
       }
     },
-    async handleDeleteSite(id) {
+    async handleDeleteSite(id) { // Удаление площадки
       if (confirm('Вы уверены, что хотите удалить эту площадку?')) {
         try {
           await deleteSite(id)
