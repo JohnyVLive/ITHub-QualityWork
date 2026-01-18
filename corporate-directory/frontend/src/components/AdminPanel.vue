@@ -49,7 +49,7 @@
               <td>{{ employee.site_name }}</td>
               <td>
                 <div class="action-buttons">
-                  <button class="btn btn-primary" @click="openEmployeeModal(emp)">
+                  <button class="btn btn-primary" @click="openEmployeeModal(employee)">
                     Изменить
                   </button>
                   <button class="btn btn-danger" @click="handleDeleteEmployee(employee.id)">
@@ -96,7 +96,7 @@
       </div>
     </div>
 
-    <!-- Sites Section -->
+    <!-- Раздел площадок -->
     <div class="admin-section">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
         <h2>Площадки</h2>
@@ -126,7 +126,7 @@
       </div>
     </div>
 
-    <!-- Employee Modal -->
+    <!-- Окно редактирования сотрудника -->
     <EmployeeModal
       v-if="showEmployeeModal"
       :employee="selectedEmployee"
@@ -136,7 +136,7 @@
       @save="handleSaveEmployee"
     />
 
-    <!-- Company Modal -->
+    <!-- Окно редактирования компании -->
     <CompanyModal
       v-if="showCompanyModal"
       :company="selectedCompany"
@@ -144,7 +144,7 @@
       @save="handleSaveCompany"
     />
 
-    <!-- Site Modal -->
+    <!-- Окно редактирования площадки -->
     <SiteModal
       v-if="showSiteModal"
       :site="selectedSite"
@@ -322,7 +322,7 @@ export default {
     }
   },
   mounted() {
-    this.username = localStorage.getItem('username') || 'Пользователь'
+    this.username = localStorage.getItem('username') || 'Администратор'
     this.loadData()
   }
 }
@@ -509,6 +509,5 @@ tbody tr:last-child td {
 .btn-danger:hover {
   background-color: #c0392b;
 }
-
 
 </style>
