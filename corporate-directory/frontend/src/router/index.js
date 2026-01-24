@@ -12,7 +12,8 @@ const routes = [
     {
         path: '/admin',
         name: 'AdminPanel',
-        component: AdminPanel
+        component: AdminPanel,
+        meta: { requiresAuth: true }
     },
     {
         path: '/login',
