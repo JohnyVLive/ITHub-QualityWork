@@ -19,7 +19,14 @@ const routes = [
         path: '/login',
         name: 'Login',
         component: Login
-    }
+    },
+
+    {
+    // Обработка несуществующих маршрутов с перенаправлением на главную страницу
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    redirect: '/'
+  }
 ]
 
 // Создание и экспорт роутера
