@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import DirectoryView from '../components/DirectoryView.vue'
 import AdminPanel from '../components/AdminPanel.vue'
-import AdminLogin from '../components/AdminLogin.vue'
+import Login from '../components/Login.vue'
 
 const routes = [
     {
@@ -17,8 +17,8 @@ const routes = [
     },
     {
         path: '/login',
-        name: 'AdminLogin',
-        component: AdminLogin
+        name: 'Login',
+        component: Login
     }
 ]
 
@@ -34,7 +34,7 @@ router.beforeEach((to, from, next) => {
   
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!token) {
-      next('/admin/login')
+      next('/login')
     } else {
       next()
     }

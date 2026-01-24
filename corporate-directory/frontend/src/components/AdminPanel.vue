@@ -315,7 +315,7 @@ export default {
     logout() {
       localStorage.removeItem('authToken') // Удаляем токен аутентификации из локального хранилища
       localStorage.removeItem('username') // Удаляем имя пользователя из локального хранилища
-      this.$router.push('/admin/login')
+      this.$router.push('/login')
     },
     goToDirectory() {
       this.$router.push('/')
