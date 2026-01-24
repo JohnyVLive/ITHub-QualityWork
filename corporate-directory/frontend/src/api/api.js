@@ -1,9 +1,24 @@
 import axios from 'axios'
 
 const API_BASE_URL = 'http://localhost:3000/api'
+const AUTH_API_URL = 'http://localhost:3001/api/auth'
 
+// Создание экземпляра axios с базовым URL
 export const api = axios.create({
   baseURL: API_BASE_URL
+})
+
+export const authApi = axios.create({
+  baseURL: AUTH_API_URL
+})
+
+// Middleware для добавления токена в заголовки запроса
+api.interceptors.request.use(config => {
+  const token = localStorage.getItem('authToken')
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+  return config
 })
 
 // Публичный API
@@ -55,3 +70,13 @@ export const updateSite = (id, site) =>
 
 export const deleteSite = (id) => 
   api.delete(`/admin/sites/${id}`)
+
+// Auth API
+export const login = (credentials) => 
+  authApi.post('/login', credentials)
+
+export const register = (credentials) => 
+  authApi.post('/register', credentials)
+
+export const verifyToken = (token) => 
+  authApi.post('/verify', { token })
