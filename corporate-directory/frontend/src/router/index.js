@@ -35,11 +35,16 @@ const router = createRouter({
     routes
 })
 
-// Проверка авторизации перед переходом на страницу админки
+// Проверка авторизации
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('authToken')
   
-  if (to.matched.some(record => record.meta.requiresAuth)) {
+  // Если пользователь пытается зайти на /login и уже авторизован
+  if (to.path === '/login' && token) {
+    next('/admin') // Перенаправляем на /admin
+  }
+  // Проверка авторизации для страниц, требующих авторизации
+  else if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!token) {
       next('/login')
     } else {
