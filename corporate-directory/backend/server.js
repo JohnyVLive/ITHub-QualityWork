@@ -2,13 +2,35 @@ import express from 'express'; // Импортируем Express.js
 import db from './database.js'; // Импортируем модуль базы данных
 import dbAPIRequests from './dbAPIRequests.js'; // Импортируем SQL-запросы
 import cors from 'cors'; // Импортируем cors для разрешения кросс-доменных запросов
-
+import axios from 'axios';
 
 const app = express();
 const PORT = 3000;
+const AUTH_SERVICE_URL = 'http://localhost:3001';
+
 app.use(express.json()); 
 app.use(cors()); // Разрешаем кросс-доменные запросы
 
+// Middleware для аутентификации пользователя
+const authMiddleware = async (req, res, next) => {
+  const token = req.headers.authorization?.replace('Bearer ', '');
+
+  if (!token) {
+    return res.status(401).json({ error: 'No token provided' });
+  }
+
+  try {
+    const response = await axios.post(`${AUTH_SERVICE_URL}/api/auth/verify`, { token });
+    if (response.data.valid) {
+      req.user = response.data.user;
+      next();
+    } else {
+      res.status(401).json({ error: 'Invalid token' });
+    }
+  } catch (error) {
+    res.status(401).json({ error: 'Authentication failed' });
+  }
+};
 
 // ==================== Публичные точки ====================
 
@@ -93,7 +115,7 @@ app.get('/api/sites/:id', (req, res) => {
 // ==================== Админские точки для управления сотрудниками ====================
 
 // Вывести всех сотрудников
-app.get('/api/admin/employees', (req, res) => {
+app.get('/api/admin/employees', authMiddleware, (req, res) => {
   db.all(dbAPIRequests.allEmployees, (err, rows) => {
     if (err) {
       return res.status(500).json({ error: 'Database error' });
@@ -103,7 +125,7 @@ app.get('/api/admin/employees', (req, res) => {
 });
 
 // Создать сотрудника
-app.post('/api/admin/employees', (req, res) => {
+app.post('/api/admin/employees', authMiddleware, (req, res) => {
   const employee = req.body;
   const params = [
     employee.full_name,
@@ -124,8 +146,9 @@ app.post('/api/admin/employees', (req, res) => {
     res.status(201).json({ id: this.lastID, message: 'Employee created' });
   });
 });
+
 // Обновить сотрудника
-app.put('/api/admin/employees/:id', (req, res) => {
+app.put('/api/admin/employees/:id', authMiddleware, (req, res) => {
   const employee = req.body;
   const params = [
     employee.full_name,
@@ -149,7 +172,7 @@ app.put('/api/admin/employees/:id', (req, res) => {
 });
 
 // Удалить сотрудника
-app.delete('/api/admin/employees/:id', (req, res) => {
+app.delete('/api/admin/employees/:id', authMiddleware, (req, res) => {
   db.run(dbAPIRequests.deleteEmployee, [req.params.id], function(err) {
     if (err) {
       return res.status(500).json({ error: 'Database error' });
@@ -160,7 +183,7 @@ app.delete('/api/admin/employees/:id', (req, res) => {
 
 // ==================== Админские точки для компаний и площадок ====================
 // Создать компанию
-app.post('/api/admin/companies', (req, res) => {
+app.post('/api/admin/companies', authMiddleware, (req, res) => {
   const company = req.body;
   const params = [company.name, company.comment];
   
@@ -173,7 +196,7 @@ app.post('/api/admin/companies', (req, res) => {
 } );
 
 // Обновить компанию
-app.put('/api/admin/companies/:id', (req, res) => {
+app.put('/api/admin/companies/:id', authMiddleware, (req, res) => {
   const company = req.body;
   const params = [company.name, company.comment, req.params.id];
   
@@ -186,7 +209,7 @@ app.put('/api/admin/companies/:id', (req, res) => {
 });
 
 // Удалить компанию
-app.delete('/api/admin/companies/:id', (req, res) => {
+app.delete('/api/admin/companies/:id', authMiddleware, (req, res) => {
   db.run(dbAPIRequests.deleteCompany, [req.params.id], function(err) {
     if (err) {
       return res.status(500).json({ error: 'Database error' });
@@ -196,7 +219,7 @@ app.delete('/api/admin/companies/:id', (req, res) => {
 });
 
 // Создать площадку
-app.post('/api/admin/sites', (req, res) => {
+app.post('/api/admin/sites', authMiddleware, (req, res) => {
   const site = req.body;
   const params = [site.name, site.comment];
   
@@ -209,7 +232,7 @@ app.post('/api/admin/sites', (req, res) => {
 } );
 
 // Обновить площадку
-app.put('/api/admin/sites/:id', (req, res) => {
+app.put('/api/admin/sites/:id', authMiddleware, (req, res) => {
   const site = req.body;
   const params = [site.name, site.comment, req.params.id];
   
@@ -222,7 +245,7 @@ app.put('/api/admin/sites/:id', (req, res) => {
 });
 
 // Удалить площадку
-app.delete('/api/admin/sites/:id', (req, res) => {
+app.delete('/api/admin/sites/:id', authMiddleware, (req, res) => {
   db.run(dbAPIRequests.deleteSite, [req.params.id], function(err) {
     if (err) {
       return res.status(500).json({ error: 'Database error' });
@@ -232,7 +255,6 @@ app.delete('/api/admin/sites/:id', (req, res) => {
 });
 
 // Запустить сервер
-
 app.listen(PORT, () => {
   console.log(`Backend API running on http://localhost:${PORT}`);
 });
