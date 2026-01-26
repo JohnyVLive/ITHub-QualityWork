@@ -183,7 +183,6 @@ export default {
     },
     filteredEmployees() {
       let filtered = this.employees
-
       // Фильтрация по поисковому запросу
       if (this.searchQuery) {
         const query = this.searchQuery.toLowerCase()
