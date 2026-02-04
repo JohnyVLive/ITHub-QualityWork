@@ -245,7 +245,7 @@ export default {
         console.error('Error loading data:', error)
       }
     },
-
+    // Загрузка данных о сотрудниках
     async loadEmployees() {
       try {
         if (this.viewMode === 'company' && this.selectedCompanyId) {
@@ -268,7 +268,7 @@ export default {
       }
     },
 
-    // Сортировка
+    // Сортировка по столбцу
     sortBy(key) {
       if (this.sortKey === key) {
         this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc'
@@ -277,7 +277,7 @@ export default {
         this.sortOrder = 'asc'
       }
     },
-
+    // Класс сортировки
     getSortClass(key) {
       if (this.sortKey === key) {
         return this.sortOrder === 'asc' ? 'sorted-asc' : 'sorted-desc'
@@ -515,6 +515,21 @@ export default {
   padding: 40px !important;
   color: #999;
   font-style: italic;
+}
+
+th.sortable::after {
+  content: ' ⇅';
+  opacity: 0.3;
+}
+
+th.sorted-asc::after {
+  content: ' ↑';
+  opacity: 1;  
+}
+
+th.sorted-desc::after {
+  content: ' ↓';
+  opacity: 1;
 }
 
 /* Футер */
